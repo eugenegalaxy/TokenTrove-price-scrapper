@@ -5,14 +5,16 @@ from selenium.webdriver.firefox.service import Service
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.common.exceptions import NoSuchElementException
 import yfinance as yf
-
-from tqdm import tqdm
 from pprint import pprint
+import warnings
+from tqdm import tqdm
 
 
 def get_crypto_price(ticker):
-    crypto = yf.Ticker(ticker)
-    price = crypto.history(period='1d')['Close'].iloc[0]
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        crypto = yf.Ticker(ticker)
+        price = crypto.history(period='1d')['Close'].iloc[0]
     return price
 
 
@@ -24,8 +26,16 @@ def setup_driver():
     return driver
 
 
-# NOTE: Maybe split search into different calls by quality (higher qualities, especially in GODS often not available = slow)
 def scrape_prices(cards, qualities, currencies):
+
+    # In cases if only one card/quality/currency is given, convert to list for iteration to work
+    if not isinstance(cards, list):
+        cards = [cards]
+    if not isinstance(qualities, list):
+        qualities = [qualities]
+    if not isinstance(currencies, list):
+        currencies = [currencies]
+
     driver = setup_driver()
     gods_price = get_crypto_price('GODS-USD')
     eth_price = get_crypto_price('ETH-USD')
@@ -44,18 +54,16 @@ def scrape_prices(cards, qualities, currencies):
                     price_text = price_element.text
                     card_prices[card][quality][currency] = price_text
                 except NoSuchElementException:
-                    print(f"{card}-{quality}-{currency}: Price not found. Set to 0")
-                    card_prices[card][quality][currency] = 0
+                    print(f"\n{card} - {quality} - {currency}: Price not found. Set to 0.")
+                    card_prices[card][quality][currency] = '0.00'
                 except Exception as e:
                     print(f"{card}-{quality}-{currency}: {e}")
-                    card_prices[card][quality][currency] = 0
+                    card_prices[card][quality][currency] = '0.00'
                 if currency == 'GODS':
-                    card_prices[card][quality]['GODS_USD'] = round(float(price_text) * gods_price, 2)
-                    usd_price = card_prices[card][quality]['GODS_USD']
+                    card_prices[card][quality]['USD'] = round(float(price_text) * gods_price, 2)
                 elif currency == 'ETH':
-                    card_prices[card][quality]['ETH_USD'] = round(float(price_text) * eth_price, 2)
-                    usd_price = card_prices[card][quality]['ETH_USD']
-                print(f"{card}-{quality}-{currency}: {price_text} (${usd_price})")
-    pprint(card_prices)
+                    card_prices[card][quality]['USD'] = round(float(price_text) * eth_price, 2)
+                # print(f"{card}-{quality}-{currency}: {card_prices[card][quality][currency]} (${card_prices[card][quality]['USD']})")
+    # pprint(card_prices)
     driver.quit()
     return card_prices
