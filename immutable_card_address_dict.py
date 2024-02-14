@@ -148,5 +148,11 @@ card_immutable_address_dict = {
         'Shadow': '547bcf02a14a95509539146e71a71ca637bcd29f936b9722f43a106c2a86bba2',
         'Gold': 'edcc7941e2c17fb0d9469f36d6853fbec35011d9ac8b223494da6566d53cd754',
         'Diamond': '5e769b9b59447a3c2670514fffa699646839450d598c653f506b4887a655a34b'
+    },
+    'Charm': {
+        'Meteorite': '2c3be7d4e960b662385de1e7ea6f71964a26810aafaeeab2a1650625e7fde6c0',
+        'Shadow': '4c358aafa119ec3f8d68505295928717306bd0a89d580e8146b08200b5d98255',
+        'Gold': '1e062dc34eeb0713ef49f7eac716c959030125bed5c149a91d7ad87f8101b97a',
+        'Diamond': '8c9e50e1ce826d75f2cb95a2ce051624617ea1720903f9a1a054f1ab00f5ba12'
     }
 }
