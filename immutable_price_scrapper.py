@@ -1,3 +1,4 @@
+import random
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
@@ -5,9 +6,10 @@ from selenium.webdriver.firefox.service import Service
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.common.exceptions import NoSuchElementException
 import yfinance as yf
-from pprint import pprint
 import warnings
 from tqdm import tqdm
+
+from immutable_card_address_dict import card_immutable_address_dict
 
 
 def get_crypto_price(ticker):
@@ -26,7 +28,7 @@ def setup_driver():
     return driver
 
 
-def scrape_prices(cards, qualities, currencies):
+def scrape_prices_immutable(cards, qualities, currencies):
 
     # In cases if only one card/quality/currency is given, convert to list for iteration to work
     if not isinstance(cards, list):
@@ -35,6 +37,11 @@ def scrape_prices(cards, qualities, currencies):
         qualities = [qualities]
     if not isinstance(currencies, list):
         currencies = [currencies]
+
+    url_part_gods = 'ERC20&token_address=0xccc8cb5229b0ac8069c51fd58367fd1e622afd97'
+    url_part_eth = 'ETH&token_address='
+
+    card_urls = card_immutable_address_dict
 
     driver = setup_driver()
     gods_price = get_crypto_price('GODS-USD')
@@ -46,13 +53,24 @@ def scrape_prices(cards, qualities, currencies):
             card_prices[card][quality] = {}
             for currency in currencies:
                 try:
-                    url = f'https://tokentrove.com/collection/GodsUnchainedCards?search={card.replace(" ", "%20")}&quality={quality}&currency={currency}'
-                    driver.get(url)
-                    driver.implicitly_wait(10)
-                    XPath = '/html/body/div[1]/div/div/div[2]/div/div[2]/div[5]/div/div/div/div[1]/div/div/div/div[2]/div[2]/div[1]/span'
-                    price_element = driver.find_element(By.XPATH, XPath)
-                    price_text = price_element.text
-                    card_prices[card][quality][currency] = price_text
+                    if currency == 'GODS':
+                        url_currency = url_part_gods
+                    elif currency == 'ETH':
+                        url_currency = url_part_eth
+                    card_url = card_urls[card][quality]
+                    if card_url == '':
+                        print(f"\n{card} - {quality} - {currency}: Card URL found in dict. Set to 0.")
+                        card_prices[card][quality][currency] = '0.00'
+                    else:
+                        url = f'https://market.immutable.com/collections/0xacb3c6a43d15b907e8433077b6d38ae40936fe2c/stacked-assets/{card_url}?token_type={url_currency}'
+                        driver.get(url)
+                        driver.implicitly_wait(10)
+                        XPath = '/html/body/div/div[2]/div[2]/div[2]/div/div/div/span'
+                        price_element = driver.find_element(By.XPATH, XPath)
+                        price_text = price_element.text
+                        card_prices[card][quality][currency] = price_text
+                        # random_sleep = random.randint(2, 6)
+                        # time.sleep(random_sleep)
                 except NoSuchElementException:
                     print(f"\n{card} - {quality} - {currency}: Price not found. Set to 0.")
                     card_prices[card][quality][currency] = '0.00'
@@ -60,10 +78,8 @@ def scrape_prices(cards, qualities, currencies):
                     print(f"{card}-{quality}-{currency}: {e}")
                     card_prices[card][quality][currency] = '0.00'
                 if currency == 'GODS':
-                    card_prices[card][quality]['USD'] = round(float(price_text) * gods_price, 2)
+                    card_prices[card][quality]['USD'] = round(float(card_prices[card][quality][currency]) * gods_price, 2)
                 elif currency == 'ETH':
-                    card_prices[card][quality]['USD'] = round(float(price_text) * eth_price, 2)
-                # print(f"{card}-{quality}-{currency}: {card_prices[card][quality][currency]} (${card_prices[card][quality]['USD']})")
-    # pprint(card_prices)
+                    card_prices[card][quality]['USD'] = round(float(card_prices[card][quality][currency]) * eth_price, 2)
     driver.quit()
     return card_prices
