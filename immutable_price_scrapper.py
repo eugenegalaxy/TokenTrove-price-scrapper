@@ -104,7 +104,7 @@ class ImmutablePriceScrapper:
                 price = price_element.text
                 return price
         except NoSuchElementException:
-            print(f"\n{card}: Price not found. Set to 0.")
+            print(f"{card}: Price not found. Set to 0.")
             return "0.00"
         except Exception as e:
             print(f"{card}: {e}")
