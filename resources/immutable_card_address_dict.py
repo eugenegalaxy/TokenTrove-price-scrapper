@@ -1,6 +1,6 @@
 card_immutable_address_dict = {
     'Rapture Dance': {
-            'Meteorite': '0',  # 44ca356c4168ee21b190f511a93e5be0baab0193d3014bc42e304bdd517d7619
+            'Meteorite': '44ca356c4168ee21b190f511a93e5be0baab0193d3014bc42e304bdd517d7619',
             'Shadow': '76d8f4b40f5a9bf977725aff2f1b260c6c0646dc7a01feff23292251410a5d9a',
             'Gold': '1ed6538b134ab6d6fd30b0241eec91379b22f5c67ff147e6181095e1174415f9',
             'Diamond': '4ce455b55d71e3751acedb123e22080abb7984163c15faed686d714444660046'

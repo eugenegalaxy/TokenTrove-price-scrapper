@@ -26,6 +26,13 @@ class ImmutablePriceScrapper:
         service = Service(GeckoDriverManager().install())
         return webdriver.Firefox(options=options, service=service)
 
+    def get_crypto_price(self, ticker, period='1d') -> float:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            crypto = yf.Ticker(ticker)
+            price = crypto.history(period=period)['Close'].iloc[0]
+        return price
+
     def get_prices_card_list(self, cards: list[str], qualities: list[str], currencies: list[str]) -> dict:
         """
         Get the prices of cards in different qualities and currencies.
@@ -68,7 +75,7 @@ class ImmutablePriceScrapper:
                     if card_url == '0':  # If the card is not found in the dict, set the price to 0.00 (some cards do not exist in certain qualities)
                         card_price = '0.00'
                     else:
-                        card_price = self.get_one_card_price(card, url_currency_part, card_urls[card][quality])
+                        card_price = self._get_one_card_price(card, url_currency_part, card_urls[card][quality])
                     currency_usd_price = round(float(card_price.replace(',', '')) * gods_price if currency == 'GODS' else float(card_price) * eth_price, 2)
                     currency_usd_price = str(currency_usd_price).replace('.', ',')
                     card_prices[quality][currency].append(currency_usd_price)
@@ -76,7 +83,7 @@ class ImmutablePriceScrapper:
                     scan_counter += 1
         return card_prices
 
-    def get_one_card_price(self, card: str, url_currency_part: str, url_card_part: str) -> str:
+    def _get_one_card_price(self, card: str, url_currency_part: str, url_card_part: str) -> str:
         """
         Retrieves the lowest price of a card from the Immutable marketplace by scrapping the price from a given URL.
 
@@ -130,15 +137,16 @@ class ImmutablePriceScrapper:
                 cosmetics_prices[type][currency] = []
                 for cosmetic in cosmetics_names:
                     if cosmetic in cosmetics_dict[type]:
-                        cosmetic_price = self.get_one_cosmetics_price(cosmetic, type, currency)  # Example: 'Order', 'Card back', 'GODS'
-                        currency_usd_price = round(float(cosmetic_price.replace(',', '')) * gods_price if currency == 'GODS' else float(cosmetic_price) * eth_price, 2)
+                        cosmetic_price = self._get_one_cosmetics_price(cosmetic, type, currency)  # Example: 'Order', 'Card back', 'GODS'
+                        currency_usd_price = round(float(cosmetic_price.replace(',', '')) *
+                                                   gods_price if currency == 'GODS' else float(cosmetic_price) * eth_price, 2)
                         currency_usd_price = str(currency_usd_price).replace('.', ',')
                         cosmetics_prices[type][currency].append(currency_usd_price)
                         print(f"Got price for {cosmetic} - {type} in {currency} ${currency_usd_price} (Scan {scan_counter}/{len_scans})")
                         scan_counter += 1
         return cosmetics_prices
 
-    def get_one_cosmetics_price(self, cosmetic: str, type: str, currency: str) -> str:
+    def _get_one_cosmetics_price(self, cosmetic: str, type: str, currency: str) -> str:
         if currency == "GODS":
             url_currency = '&currencyFilter=0xccc8cb5229b0ac8069c51fd58367fd1e622afd97'
         elif currency == "ETH":
@@ -164,10 +172,3 @@ class ImmutablePriceScrapper:
         except Exception as e:
             print(f"{cosmetic}: {e}")
             return "0.00"
-
-    def get_crypto_price(self, ticker):
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            crypto = yf.Ticker(ticker)
-            price = crypto.history(period='1d')['Close'].iloc[0]
-        return price
