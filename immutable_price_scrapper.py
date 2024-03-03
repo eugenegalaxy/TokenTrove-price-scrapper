@@ -64,7 +64,11 @@ class ImmutablePriceScrapper:
                 card_prices[quality][currency] = []
                 for card in cards:
                     url_currency_part = url_part_gods if currency == 'GODS' else url_part_eth
-                    card_price = self.get_one_card_price(card, url_currency_part, card_urls[card][quality])
+                    card_url = card_urls[card][quality]
+                    if card_url == '0':  # If the card is not found in the dict, set the price to 0.00 (some cards do not exist in certain qualities)
+                        card_price = '0.00'
+                    else:
+                        card_price = self.get_one_card_price(card, url_currency_part, card_urls[card][quality])
                     currency_usd_price = round(float(card_price.replace(',', '')) * gods_price if currency == 'GODS' else float(card_price) * eth_price, 2)
                     currency_usd_price = str(currency_usd_price).replace('.', ',')
                     card_prices[quality][currency].append(currency_usd_price)

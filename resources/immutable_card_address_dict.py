@@ -1,6 +1,6 @@
 card_immutable_address_dict = {
     'Rapture Dance': {
-            'Meteorite': '44ca356c4168ee21b190f511a93e5be0baab0193d3014bc42e304bdd517d7619',
+            'Meteorite': '0',  # 44ca356c4168ee21b190f511a93e5be0baab0193d3014bc42e304bdd517d7619
             'Shadow': '76d8f4b40f5a9bf977725aff2f1b260c6c0646dc7a01feff23292251410a5d9a',
             'Gold': '1ed6538b134ab6d6fd30b0241eec91379b22f5c67ff147e6181095e1174415f9',
             'Diamond': '4ce455b55d71e3751acedb123e22080abb7984163c15faed686d714444660046'
@@ -154,5 +154,17 @@ card_immutable_address_dict = {
         'Shadow': '4c358aafa119ec3f8d68505295928717306bd0a89d580e8146b08200b5d98255',
         'Gold': '1e062dc34eeb0713ef49f7eac716c959030125bed5c149a91d7ad87f8101b97a',
         'Diamond': '8c9e50e1ce826d75f2cb95a2ce051624617ea1720903f9a1a054f1ab00f5ba12'
+    },
+    'A Toast To Peace': {
+        'Meteorite': '022d9cfdd558414bb39ae4bf2f0a6542fa81f803949acd585f8961f45e11e716',
+        'Shadow': '7cf4201b682ab81cd44502875eaa520fd09968c3d675d6212058aef334d440c5',
+        'Gold': '073c20656ac8db209bf7ae6f7e6a3cb99b589b77465ed1b259204afbae4fa83c',
+        'Diamond': '90554ee1cba1914d56ad23957af951318002077f746e2b93e51c91bb9cc9422d'
+    },
+    'Faceless Benefactor': {
+        'Meteorite': 'b3d63f975f620f3e6e81fbe6e7b372b087331042a37684943e8346feed7ae2c3',
+        'Shadow': '0',
+        'Gold': '0',
+        'Diamond': '28ea0222f167ccdf0607530ab1952d810c87006a3359caaacddf0f9f6a6433ee'
     }
 }

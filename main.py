@@ -85,7 +85,7 @@ def scan_cosmetics(excel_filename: str) -> None:
 if __name__ == '__main__':
     try:
         scan_cards('card_prices.xlsx')
-        scan_cosmetics('cosmetics_prices.xlsx')
+        # scan_cosmetics('cosmetics_prices.xlsx')
     except Exception:
         traceback.print_exc()
         quit()
