@@ -53,8 +53,8 @@ def scan_cosmetics(excel_filename: str) -> None:
                 'GODS': {'column': 3, 'start_row': 8}
             },
             'Trinket': {
-                'ETH': {'column': 2, 'start_row': 18},
-                'GODS': {'column': 3, 'start_row': 18}
+                'ETH': {'column': 2, 'start_row': 28},
+                'GODS': {'column': 3, 'start_row': 28}
             }
         }
 
@@ -84,8 +84,8 @@ def scan_cosmetics(excel_filename: str) -> None:
 
 if __name__ == '__main__':
     try:
-        scan_cards('card_prices.xlsx')
-        # scan_cosmetics('cosmetics_prices.xlsx')
+        # scan_cards('card_prices.xlsx')
+        scan_cosmetics('cosmetics_prices.xlsx')
     except Exception:
         traceback.print_exc()
         quit()
